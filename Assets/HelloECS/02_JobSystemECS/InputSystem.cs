@@ -1,21 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Entities;
+using Unity.Transforms;
+using Unity.Collections;
+using Unity.Mathematics;
+using Unity.Jobs;
 
 namespace JobSystemECS
 {
-    public class InputSystem : MonoBehaviour
+    public class InputSystem : JobComponentSystem
     {
-        // Start is called before the first frame update
-        void Start()
+        struct InputJob : IJobForEach<Translation, InputComponent>
         {
+            public float Horizontal;
+            public float Vertical;
 
+            public void Execute([ReadOnly] ref Translation translation, ref InputComponent inputComponent)
+            {
+                inputComponent.Horizontal = Horizontal;
+                inputComponent.Vertical = Vertical;
+            }
         }
 
-        // Update is called once per frame
-        void Update()
+        protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
+            var job = new InputJob()
+            {
+                Horizontal = Input.GetAxis("Horizontal"),
+                Vertical = Input.GetAxis("Vertical")
+            };
 
+            return job.Schedule(this, inputDependencies);
         }
     }
 }
