@@ -5,6 +5,7 @@ using Unity.Entities;
 
 namespace JobSystemECS
 {
+    [RequiresEntityConversion]
     public class InputProxy : MonoBehaviour, IConvertGameObjectToEntity
     {
         public float speed = 0.5f;
